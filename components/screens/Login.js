@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 
 
-export default function Login({ navigation }) {
+export default function Login({ navigation, route }) {
 
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -13,6 +13,7 @@ export default function Login({ navigation }) {
   // const [loading, setLoading] = useState(true);
 
   // fetch api
+
   const fetchData = async () => {
 
     fetch('https://pwqz9y-8080.csb.app/users')
@@ -25,14 +26,29 @@ export default function Login({ navigation }) {
     fetchData();
   }, []);
 
+
+  // refresh api when sign up new account
+
+
+  useEffect(() => {
+    if (route.params?.newUser) {
+      const newUserData = route.params.newUser;
+      // Thêm dữ liệu todo mới vào danh sách todos hiện tại
+      setData((prevData) => [...prevData, newUserData]);
+    }
+  }, [route.params?.newUser]);
+
   // handle Login
+
+
   const checkUser = (name, pass) => {
     const res = data.find(item => item.name === name && item.password === pass)
     return res;
   }
   const handleLogin = () => {
     if (checkUser(name, password)) {
-      navigation.navigate('Home', { name: name })
+      navigation.navigate('Home')
+      global.appName = name;
     } else {
       console.log('Dang nhap that bai')
     }

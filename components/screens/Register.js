@@ -11,6 +11,11 @@ export default function Register({ navigation }) {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
 
+  const newUser = {
+    name: name,
+    password: password
+  }
+
   // fetch api
 
   const postUser = async () => {
@@ -25,7 +30,11 @@ export default function Register({ navigation }) {
           name: name,
           password: password
         }),
-      });
+      })
+        .then(response => response.json())
+        .then(() => {
+          navigation.navigate('Login', { newUser: newUser })
+        })
     } catch (error) {
       console.error(error);
     }
@@ -38,7 +47,7 @@ export default function Register({ navigation }) {
       await postUser(); // Gửi yêu cầu đăng ký và đợi cho đến khi nó hoàn thành
 
       // Sau khi đăng ký thành công, thực hiện đăng nhập tự động
-      navigation.navigate('Login');
+      // navigation.navigate('Login');
     } catch (error) {
       console.error(error);
     }
