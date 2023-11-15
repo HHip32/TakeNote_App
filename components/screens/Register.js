@@ -1,6 +1,50 @@
 import { StyleSheet, Text, View, TextInput, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react';
+
+
+
+
+
 
 export default function Register({ navigation }) {
+
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+
+  // fetch api
+
+  const postUser = async () => {
+    try {
+      const response = await fetch('https://pwqz9y-8080.csb.app/users', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name,
+          password: password
+        }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // handle Register
+
+  const handleRegister = async () => {
+    try {
+      await postUser(); // Gửi yêu cầu đăng ký và đợi cho đến khi nó hoàn thành
+
+      // Sau khi đăng ký thành công, thực hiện đăng nhập tự động
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.text1}>SIGN UP</Text>
@@ -8,17 +52,25 @@ export default function Register({ navigation }) {
         <Text style={styles.textEmail}>Name</Text>
         <TextInput
           style={styles.inputEmail}
+          onChangeText={(text) => {
+            setName(text)
+          }}
         />
       </View>
       <View style={styles.editPassword}>
         <Text style={styles.textPassword}>Password</Text>
         <TextInput
           style={styles.inputPassword}
+          secureTextEntry={true}
+          onChangeText={(text) => {
+            setPassword(text)
+          }}
         />
       </View>
       <View style={{ width: '90%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', top: 300 }}>
         <Pressable
           style={{ width: 150, height: 50, borderWidth: 1, borderColor: '#FFF', backgroundColor: '#ffe4e1', justifyContent: 'center', alignItems: 'center' }}
+          onPress={handleRegister}
         >
           <Text style={{ fontSize: 24, fontWeight: 'bold', lineHeight: 24, color: '#f08080' }}>
             SIGN UP
@@ -27,7 +79,7 @@ export default function Register({ navigation }) {
         <Pressable
           style={{ width: 150, height: 50, borderWidth: 1, borderColor: '#FFF', backgroundColor: '#ffe4e1', justifyContent: 'center', alignItems: 'center' }}
           onPress={() => {
-            navigation.navigate('Login')
+            navigation.goBack();
           }}
         >
           <Text style={{ fontSize: 24, fontWeight: 'bold', lineHeight: 24, color: '#f08080' }}>

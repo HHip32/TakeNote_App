@@ -10,19 +10,19 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState('');
 
   const [data, setData] = useState([]);
+  // const [loading, setLoading] = useState(true);
 
   // fetch api
-  const getUsers = async () => {
-    try {
-      const response = await fetch('https://pwqz9y-8080.csb.app/users');
-      const json = await response.json();
-      setData(json);
-    } catch (error) {
-      console.error(error);
-    }
+  const fetchData = async () => {
+
+    fetch('https://pwqz9y-8080.csb.app/users')
+      .then(response => response.json())
+      .then(json => setData(json))
+      .catch(error => console.error(error))
+
   };
   useEffect(() => {
-    getUsers();
+    fetchData();
   }, []);
 
   // handle Login
