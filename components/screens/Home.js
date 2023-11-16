@@ -10,7 +10,7 @@ export default function Home({ navigation, route }) {
     const [idDelete, setIdDelete] = useState(null);
     const fetchApiData = async () => {
 
-        fetch('https://pwqz9y-8080.csb.app/notes')
+        fetch(`https://pwqz9y-8080.csb.app/notes?state=${'Long Term'}`)
             .then(response => response.json())
             .then(json => setData(json))
             .then(error => console.log(error))
@@ -19,6 +19,7 @@ export default function Home({ navigation, route }) {
 
     useEffect(() => {
         fetchApiData();
+
     }, [route.params?.newEditJob, route.params?.newJob, idDelete]);
 
     // handle delete Job
@@ -34,6 +35,7 @@ export default function Home({ navigation, route }) {
             .then(error => console.log(error))
     }
 
+
     // handle search job
 
     const [jobTitle, setJobTitle] = useState('');
@@ -48,25 +50,26 @@ export default function Home({ navigation, route }) {
 
     const [newData, setNewData] = useState(data);
 
-    const handleAddNewJob = (job) => {
-        let dta = [
-            ...newData,
-            {
-                name: job,
-                id: newData.length + 1
-            }
-        ]
-        setNewData(dta);
-    }
-
     const handleNavigate = () => {
         navigation.navigate('AddNote');
     }
+    // handle selected tab
 
+    const [selectedTab, setSelectedTab] = useState('Long Term');
+    const handleSelectedTab = (tab) => {
+        setSelectedTab(tab);
+    }
+
+    function filter(selectedTab) {
+        fetch(`https://pwqz9y-8080.csb.app/notes?state=${selectedTab}`)
+            .then(response => response.json())
+            .then(json => setData(json))
+            .then(error => console.log(error))
+    }
 
     // Render Item của flatlist
     const renderItem = ({ item }) => (
-        <View style={{ width: 355, height: 40, borderWidth: 1, borderRadius: 24, backgroundColor: '#D3D5D8', top: 20, flexDirection: 'row', justifyContent: 'center', marginTop: item.id == 1 ? 0 : 20 }}>
+        <View style={{ width: 355, height: 40, borderWidth: 1, borderRadius: 24, top: 20, flexDirection: 'row', justifyContent: 'center', marginTop: item.id == 1 ? 0 : 20 }}>
             <View style={{ width: 50, height: 30, justifyContent: 'center', alignItems: 'center' }}>
                 <Image
                     source={require('../images/Frame3.png')}
@@ -74,7 +77,7 @@ export default function Home({ navigation, route }) {
                 />
             </View>
             <Text
-                style={{ width: 230, height: 26, fontFamily: 'Inter', fontWeight: 400, fontSize: 16, lineHeight: 26 }}
+                style={{ width: 230, height: 26, fontFamily: 'Inter', fontWeight: 400, fontSize: 16, lineHeight: 26, color: selectedTab==='Long Term' ? 'red': selectedTab==="Short Term" ? 'green' : 'blue' }}
             > {item.name}</Text>
             <Pressable
                 style={{ width: 50, height: 30, justifyContent: 'center', alignItems: 'center' }}
@@ -116,6 +119,42 @@ export default function Home({ navigation, route }) {
                     placeholderTextColor={'#171A1F'}
                     onChangeText={text => setJobTitle(text)}
                 />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 25, backgroundColor: 'white', width: '90%' }}>
+                <Pressable
+                    style={{ width: 101, height: 35, borderWidth: 1, borderRadius: 5, backgroundColor: selectedTab === 'Long Term' ? '#F1B000' : '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}
+                    onPress={() => {
+                        handleSelectedTab('Long Term');
+                        filter('Long Term');
+                    }}
+
+                >
+                    <Text style={{ width: 70, height: 20, fontFamily: 'Roboto', fontWeight: 700, fontSize: 14, lineHeight: 16.41 }}>
+                        Long Term
+                    </Text>
+                </Pressable>
+                <Pressable
+                    style={{ width: 101, height: 35, backgroundColor: selectedTab === 'Short Term' ? '#F1B000' : '#FFFFFF', borderWidth: 1, borderRadius: 5, alignItems: 'center', justifyContent: 'center' }}
+                    onPress={() => {
+                        handleSelectedTab('Short Term');
+                        filter('Short Term');
+                    }}
+                >
+                    <Text style={{ width: 80, height: 20, fontFamily: 'Roboto', fontWeight: 700, fontSize: 14, lineHeight: 16.41, textAlign: 'center' }}>
+                        Short Term
+                    </Text>
+                </Pressable>
+                <Pressable
+                    style={{ width: 101, height: 35, backgroundColor: selectedTab === 'Done' ? '#F1B000' : '#FFFFFF', borderWidth: 1, borderRadius: 5, alignItems: 'center', justifyContent: 'center' }}
+                    onPress={() => {
+                        handleSelectedTab('Done');
+                        filter('Done');
+                    }}
+                >
+                    <Text style={{ width: 50, height: 20, fontFamily: 'Roboto', fontWeight: 700, fontSize: 14, lineHeight: 16.41, textAlign: 'center' }}>
+                        Done
+                    </Text>
+                </Pressable>
             </View>
             <View style={{ marginTop: 30, height: 400 }}>
                 <FlatList

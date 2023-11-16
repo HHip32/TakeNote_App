@@ -1,7 +1,16 @@
 import { StyleSheet, Text, View, Image, TextInput, FlatList, Pressable } from 'react-native';
 import { useState } from 'react';
+import { Dropdown } from 'react-native-element-dropdown';
+import AntDesign from '@expo/vector-icons/AntDesign';
+
+
 
 export default function AddNote({ navigation, route }) {
+    const data = [
+        { label: 'Long Term', value: 'Long Term' },
+        { label: 'Short Term', value: 'Short Term' },
+    ];
+    const [value, setValue] = useState('Long Term');
     const [newJob, setNewJob] = useState('');
 
     // handle add job
@@ -14,7 +23,8 @@ export default function AddNote({ navigation, route }) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                "name": newJob
+                "name": newJob,
+                "state": value
             }),
         }).then(() => {
             navigation.navigate("Home", { newJob: newJob });
@@ -40,6 +50,16 @@ export default function AddNote({ navigation, route }) {
                     onChangeText={text => setNewJob(text)}
                 />
             </View>
+            <View style={{width:'85%', borderWidth:1, marginTop: 15}}>
+                <Dropdown
+                    data={data}
+                    value={value}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Select item"
+                    onChange={(item) => setValue(item.value)}
+                />
+            </View>
             <Pressable
                 style={{ width: 190, height: 44, borderWidth: 1, borderRadius: 12, backgroundColor: '#00BDD6', alignItems: 'center', justifyContent: 'center', marginTop: 80 }}
                 onPress={handleAddNewJob}
@@ -61,5 +81,28 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center'
+    },
+    dropdown: {
+        margin: 16,
+        height: 50,
+        borderBottomColor: 'gray',
+        borderBottomWidth: 0.5,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
     },
 });
