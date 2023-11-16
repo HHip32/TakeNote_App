@@ -31,8 +31,9 @@ export default function Home({ navigation, route }) {
                 'Content-Type': 'application/json',
             },
 
-        }).then(() => setIdDelete(item.id))
-            .then(error => console.log(error))
+        })
+            .then(() => setIdDelete(item.id))
+            .catch(error => console.log(error))
     }
 
 
@@ -41,7 +42,7 @@ export default function Home({ navigation, route }) {
     const [jobTitle, setJobTitle] = useState('');
 
     useEffect(() => {
-        const filteredData = data.filter(item => item.name.includes(jobTitle));
+        const filteredData = data.filter(item => item.name.toLowerCase().includes(jobTitle.toLowerCase()));
         setNewData(filteredData);
     }, [jobTitle, data]);
 
@@ -77,7 +78,7 @@ export default function Home({ navigation, route }) {
                 />
             </View>
             <Text
-                style={{ width: 230, height: 26, fontFamily: 'Inter', fontWeight: 400, fontSize: 16, lineHeight: 26, color: selectedTab==='Long Term' ? 'red': selectedTab==="Short Term" ? 'green' : 'blue' }}
+                style={{ width: 230, height: 26, fontFamily: 'Inter', fontWeight: 400, fontSize: 16, lineHeight: 26, color: selectedTab === 'Long Term' ? 'red' : selectedTab === "Short Term" ? 'green' : 'blue' }}
             > {item.name}</Text>
             <Pressable
                 style={{ width: 50, height: 30, justifyContent: 'center', alignItems: 'center' }}

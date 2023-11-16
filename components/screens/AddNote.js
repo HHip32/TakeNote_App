@@ -29,7 +29,7 @@ export default function AddNote({ navigation, route }) {
         }).then(() => {
             navigation.navigate("Home", { newJob: newJob });
             setNewJob('');
-        }).then(error => console.log(error))
+        }).catch(error => console.log(error))
     }
 
 
