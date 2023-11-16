@@ -1,31 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, FlatList, Pressable } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function Home({ navigation, route }) {
 
     // fetch api
 
     const [data, setData] = useState([]);
-    const [error, setError] = useState(null);
-
+    const [idDelete, setIdDelete] = useState(null);
     const fetchApiData = async () => {
-        try {
-            const response = await fetch('https://65443ae65a0b4b04436c2d4e.mockapi.io/jobstitle');
-            if (!response.ok) {
-                throw new Error('Lỗi khi tải dữ liệu từ API');
-            }
-            const data = await response.json();
-            setData(data);
-        } catch (err) {
-            setError(err);
-        }
+
+        fetch('https://pwqz9y-8080.csb.app/notes')
+            .then(response => response.json())
+            .then(json => setData(json))
+            .then(error => console.log(error))
+
     };
 
     useEffect(() => {
         fetchApiData();
-    }, []);
+    }, [route.params?.newEditJob, route.params?.newJob, idDelete]);
 
+    // handle delete Job
+    const handleDeleteJob = (item) => {
+        fetch(`https://pwqz9y-8080.csb.app/notes/${item.id}`, {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
 
+        }).then(() => setIdDelete(item.id))
+            .then(error => console.log(error))
+    }
 
     // handle search job
 
@@ -52,26 +59,10 @@ export default function Home({ navigation, route }) {
         setNewData(dta);
     }
 
-
-
-    // handle edit job
-    const handleEditJob = (job) => {
-        const updatedData = newData.map(item => {
-            if (item.id === job.id) {
-                return { ...item, name: job.name };
-            }
-            return item;
-        });
-        setNewData(updatedData);
+    const handleNavigate = () => {
+        navigation.navigate('AddNote');
     }
 
-
-
-
-    const handleNavigate = (isEdit) => {
-        // setIsEdit(true);
-        navigation.navigate('index3', { handleAddNewJob, isEdit, handleEditJob });
-    }
 
     // Render Item của flatlist
     const renderItem = ({ item }) => (
@@ -87,13 +78,25 @@ export default function Home({ navigation, route }) {
             > {item.name}</Text>
             <Pressable
                 style={{ width: 50, height: 30, justifyContent: 'center', alignItems: 'center' }}
-                onPress={() => handleNavigate(true, item)}
+                onPress={() => {
+                    navigation.navigate('EditNote', {
+                        noteToEdit: item
+                    });
+                }}
             >
                 <Image
                     source={require('../images/Frame4.png')}
                     style={{ width: 24, height: 24 }}
 
                 />
+            </Pressable>
+            <Pressable
+                style={{ width: 50, height: 30, justifyContent: 'center', alignItems: 'center' }}
+                onPress={() => {
+                    handleDeleteJob(item);
+                }}
+            >
+                <AntDesign name="delete" size={24} color="red" />
             </Pressable>
         </View>
     );
@@ -124,7 +127,7 @@ export default function Home({ navigation, route }) {
 
             <Pressable
                 style={{ width: 69, height: 69, marginTop: 20, justifyContent: 'center', alignItems: 'center', backgroundColor: '#00BDD6', borderWidth: 1, borderColor: '#FFFFFF', borderRadius: 100 }}
-                onPress={() => handleNavigate(false)}
+                onPress={handleNavigate}
             >
                 <Image
                     source={require('../images/Frame5.png')}

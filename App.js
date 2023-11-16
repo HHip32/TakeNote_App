@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Home from './components/screens/Home';
 import Login from './components/screens/Login';
 import Register from './components/screens/Register';
+import AddNote from './components/screens/AddNote';
+import EditNote from './components/screens/EditNote';
 
 
 
@@ -29,19 +31,57 @@ function HomeHeaderRight() {
     </View>
   );
 }
+function AddNoteHeaderRight({ navigation }) {
+  return (
+    <Pressable onPress={() => { navigation.goBack() }}>
+      <View style={{ width: 36, height: 36 }}>
+        <Image
+          source={require('./components/images/Frame7.png')}
+          style={{ width: 22, height: 22 }}
+        />
+      </View>
+    </Pressable>
 
+  );
+}
 
 export default function App() {
   return (
     <View style={styles.container}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='Login'>
+        <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
           <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
           <Stack.Screen name="Home" component={Home} options={{
             headerTitle: null,
             headerRight: () => <HomeHeaderRight />
           }} />
+          <Stack.Screen
+            name="AddNote"
+            component={AddNote}
+            options={({ navigation }) => ({
+              headerTitle: null,
+              header: () => (
+                <View style={{ width: '100%', height: 70, backgroundColor: '#FFFFFF', justifyContent: 'space-evenly', flexDirection: 'row', alignItems: 'center' }}>
+                  <HomeHeaderRight />
+                  <AddNoteHeaderRight navigation={navigation} /> {/* Truyền navigation vào Index3HeaderRight */}
+                </View>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="EditNote"
+            component={EditNote}
+            options={({ navigation }) => ({
+              headerTitle: null,
+              header: () => (
+                <View style={{ width: '100%', height: 70, backgroundColor: '#FFFFFF', justifyContent: 'space-evenly', flexDirection: 'row', alignItems: 'center' }}>
+                  <HomeHeaderRight />
+                  <AddNoteHeaderRight navigation={navigation} /> {/* Truyền navigation vào Index3HeaderRight */}
+                </View>
+              ),
+            })}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </View>
